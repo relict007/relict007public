@@ -1,15 +1,46 @@
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
-DESCRIPTION="Kindle comics converter"
-HOMEPAGE="https://kcc.iosphe.re/"
+DISTUTILS_USE_SETUPTOOLS=no
+PYTHON_COMPAT=( python3_7 )
+
+inherit distutils-r1
+
+DESCRIPTION="Kindle client"
+HOMEPAGE="https://github.com/ciromattia/kcc"
 SRC_URI="https://github.com/ciromattia/kcc/archive/5.5.2.tar.gz"
 
-LICENSE="ISC"
+LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="~amd64"
 IUSE=""
+KEYWORDS="amd64"
 
-DEPEND="python-3 PyQt5 pillow psutil python-slugify raven"
-RDEPEND="${DEPEND}"
-BDEPEND=""
+DEPEND="
+dev-python/PyQt5
+dev-python/python-slugify
+dev-python/pillow
+dev-python/psutil
+dev-python/raven
+dev-python/pykerberos
+app-arch/p7zip
+"
+
+S=${WORKDIR}/kcc-${PV}
+
+# DOCS=( doc/{Polygon.txt,Polygon.pdf} )
+
+python_prepare_all() {
+	distutils-r1_python_prepare_all
+}
+
+python_test() {
+	"${EPYTHON}" test/Test.py -v || die "Tests failed under ${EPYTHON}"
+}
+
+python_install_all() {
+	# if use examples; then
+	# 	dodoc -r examples
+	# 	docompress -x /usr/share/doc/${PF}/examples
+	# fi
+
+	distutils-r1_python_install_all
+}
